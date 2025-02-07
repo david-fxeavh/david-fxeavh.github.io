@@ -92,7 +92,24 @@ layout: default
                 <!-- Friends Blog -->
                 {% include friends.html %}
             </div>
-        </div>
+	
+		<script src="https://giscus.app/client.js"
+		        data-repo="david-fxeavh/david-fxeavh.github.io"
+		        data-repo-id="R_kgDOMYG5HA"
+		        data-category="Comments"
+		        data-category-id="DIC_kwDOMYG5HM4Cmvf1"
+		        data-mapping="pathname"
+		        data-strict="0"
+		        data-reactions-enabled="1"
+		        data-emit-metadata="0"
+		        data-input-position="top"
+		        data-theme="preferred_color_scheme"
+		        data-lang="zh-CN"
+		        data-loading="lazy"
+		        crossorigin="anonymous"
+		        async>
+		</script>
+	</div>
     </div>
 </article>
 
@@ -100,23 +117,6 @@ layout: default
 {% if page.mathjax %}
   {% include mathjax_support.html %}
 {% endif %}
-
-<script src="https://giscus.app/client.js"
-        data-repo="david-fxeavh/david-fxeavh.github.io"
-        data-repo-id="R_kgDOMYG5HA"
-        data-category="Comments"
-        data-category-id="DIC_kwDOMYG5HM4Cmvf1"
-        data-mapping="pathname"
-        data-strict="0"
-        data-reactions-enabled="1"
-        data-emit-metadata="0"
-        data-input-position="top"
-        data-theme="preferred_color_scheme"
-        data-lang="zh-CN"
-        data-loading="lazy"
-        crossorigin="anonymous"
-        async>
-</script>
 
 {% if site.netease_comment %}
 <!-- 网易云跟帖JS代码 start -->
