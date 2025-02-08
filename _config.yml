@@ -40,7 +40,6 @@ anchorjs: true # if you want to customize anchor. check out line:181 of `post.ht
 
 #scss
 sass:
-    sass_dir: _sass
     style: compressed
 
 # Gems
