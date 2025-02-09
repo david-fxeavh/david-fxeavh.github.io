@@ -1,4 +1,4 @@
-@media screen and (prefers-color-scheme: dark) {
+@media (prefers-color-scheme: dark) {
     body {
         background-color: #0d0e11;
          color: #eee;
