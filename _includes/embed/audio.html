@@ -8,6 +8,20 @@
   {%- endcapture -%}
 {% endunless %}
 
+<style>
+  .embed-audio {
+    width: 100%;
+    display: block;
+    display: block;
+    text-align: center;
+    font-style: normal;
+    font-size: 80%;
+    padding: 0;
+    color: #6d6c6c;
+  }
+</style>
+
+
 <p>
   <audio class="embed-audio" controls>
     {% assign extension = src | split: '.' | last %}
