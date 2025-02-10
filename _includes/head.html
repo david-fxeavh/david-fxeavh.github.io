@@ -50,6 +50,41 @@
     <link rel="stylesheet" href="{{ " /css/hux-blog.min.css" | prepend: site.baseurl }}">
     <link rel="stylesheet" href="{{ " /css/darkmode.css" | prepend: site.baseurl }}">
     <link rel="stylesheet" href="{{ " /css/_align.css" | prepend: site.baseurl }}">
+    <style>
+        .align-center,
+        div.align-center,
+        a img.align-center {
+            display: block;
+            margin-right: auto;
+            margin-left: auto;
+        }
+
+        figure.align-center {
+            img {
+                display: block;
+                margin-right: auto;
+                margin-left: auto;
+            }
+
+            figcaption {
+                text-align: center;
+            }
+        }
+
+        .align-right,
+        a img.align-right {
+            margin-bottom: 1rem;
+            margin-left: 1rem;
+            float: right;
+        }
+
+        .align-left,
+        a img.align-left {
+            margin-right: 1rem;
+            margin-bottom: 1rem;
+            float: left;
+        }
+    </style>
 
     <!-- Custom Fonts -->
     <!-- <link href="http://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet" type="text/css"> -->
