@@ -7,6 +7,9 @@
         color: #eecdcd;
       }
     .popover {
-        background-color: #000000 !important;
+        background-color: #1d1d1d !important;
      }
+    .popover-title {
+      background-color: #292929 !important;
+    }
 }
