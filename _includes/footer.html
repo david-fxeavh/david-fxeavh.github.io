@@ -39,6 +39,14 @@
 <script src="{{ "/js/sw-registration.js " | prepend: site.baseurl }}"></script>
 {% endif %}
 
+<!-- 激活 -->
+<script>
+    $(function () {
+        $('[data-toggle="popover"]').popover()
+    })
+</script>
+
+
 <!-- async load function -->
 <script>
     function async(u, c) {
