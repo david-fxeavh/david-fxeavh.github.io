@@ -6,4 +6,7 @@
     .post-preview > a {
         color: #eecdcd;
       }
+    .popover > a {
+        color: #eecdcd !important;
+     }
 }
