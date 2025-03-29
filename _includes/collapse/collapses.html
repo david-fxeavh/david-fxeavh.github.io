@@ -1,14 +1,14 @@
 
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4 class="panel-title">
+        <p class="panel-title">
             <a data-toggle="collapse" data-parent="#accordion" 
                 href="#{{ include.id }}">
                 {{ include.title }}
             </a>
-        </h4>
+        </p>
     </div>
-    <div id="{{ include.id }}" class="panel-collapse collapse in">
+    <div id="{{ include.id }}" class="panel-collapse {{ include.isitcollapse }}">
         <div class="panel-body">
             {{ include.content }}
         </div>
