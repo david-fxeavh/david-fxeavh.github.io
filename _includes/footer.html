@@ -166,11 +166,10 @@
 
 <!-- PhotoSwipe -->
 <script type="module">
-import PhotoSwipeLightbox from '../js/pswpdist/photoswipe-lightbox.esm.js';
 const lightbox = new PhotoSwipeLightbox({
 gallery: '#gallery',
 children: 'a',
-pswpModule: () => import('../js/pswpdist/photoswipe.esm.js')
+pswpModule: PhotoSwipe,
 });
 lightbox.init();
 </script>
