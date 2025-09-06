@@ -115,6 +115,23 @@ layout: default
     </div>
 </article>
 
+<!-- postonlyCSS -->
+<link rel="stylesheet" href="{{ " /css/photoswipe.css" | prepend: site.baseurl }}"">
+<link rel="stylesheet" href="//unpkg.com/heti/umd/heti.min.css">
+
+<!-- postonlyscript -->
+<!-- PhotoSwipe -->
+<script type="module">
+import PhotoSwipeLightbox from '../js/pswpdist/photoswipe-lightbox.esm.js';
+const lightbox = new PhotoSwipeLightbox({
+  gallery: '#my-gallery',
+  children: 'a',
+  pswpModule: () => import('photoswipe/dist/photoswipe.esm.js')
+});
+lightbox.init();
+</script>
+
+
 <!-- add support for mathjax by voleking-->
 {% if page.mathjax %}
   {% include mathjax_support.html %}
