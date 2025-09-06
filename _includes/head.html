@@ -49,9 +49,11 @@
     <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ " /css/hux-blog.min.css" | prepend: site.baseurl }}">
     <link rel="stylesheet" href="{{ " /css/darkmode.css" | prepend: site.baseurl }}">
-    <link rel="stylesheet" href="{{ " /css/_align.css" | prepend: site.baseurl }}">
     {% if include.type == 'post' or include.type == 'page' %}
     <link rel="stylesheet" href="//unpkg.com/heti/umd/heti.min.css">
+    {% endif %}
+    {% if include.type == 'post' %}
+    <link rel="stylesheet" href="{{ " /css/photoswipe.css" | prepend: site.baseurl }}"">
     {% endif %}
     <style>
         .align-center,
