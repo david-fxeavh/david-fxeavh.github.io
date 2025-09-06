@@ -33,6 +33,9 @@
 <!-- Simple Jekyll Search -->
 <script src="{{ "/js/simple-jekyll-search.min.js" | prepend: site.baseurl }}"></script>
 
+<script src="{{ "/js/pswpdist/photoswipe-lightbox.esm.js " | prepend: site.baseurl }}"></script>
+<script src="{{ "/js/pswpdist/photoswipe.esm.js " | prepend: site.baseurl }}"></script>
+
 <!-- Service Worker -->
 {% if site.service-worker %}
 <script src="{{ "/js/snackbar.js " | prepend: site.baseurl }}"></script>
@@ -160,6 +163,18 @@
     })();
 </script>
 {% endif %}
+
+<!-- PhotoSwipe -->
+<script type="module">
+import PhotoSwipeLightbox from '../js/pswpdist/photoswipe-lightbox.esm.js';
+import PhotoSwipe from '../js/pswpdist/photoswipe.esm.js';
+const lightbox = new PhotoSwipeLightbox({
+  gallery: '#gallery--no-dynamic-import',
+  children: 'a',
+  pswpModule: PhotoSwipe
+});
+lightbox.init();
+</script>
 
 
 <!-- Side Catalog -->
