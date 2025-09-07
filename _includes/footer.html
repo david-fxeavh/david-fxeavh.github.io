@@ -35,8 +35,8 @@
 
 <!-- <script src="/js/pswpdist/photoswipe-lightbox.esm.js"></script> -->
 <!-- <script src="/js/pswpdist/photoswipe.esm.js"></script> -->
-<script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/umd/photoswipe.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/photoswipe@5.4.4/dist/umd/photoswipe-lightbox.umd.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/photoswipe@5.4.4/dist/umd/photoswipe.umd.min.js"></script>
+<script src="https://fastly.jsdelivr.net/npm/photoswipe@5.4.4/dist/umd/photoswipe-lightbox.umd.min.js"></script>
 
 <!-- Service Worker -->
 {% if site.service-worker %}
@@ -165,13 +165,95 @@
     })();
 </script>
 {% endif %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // 1. 找到所有你想自动添加 PhotoSwipe 功能的 figure 元素
+        //    这里使用 'figure.align-right' 作为例子，你可以根据需要修改选择器
+        const targetFigures = document.querySelectorAll('figure');
 
+        // 数组用于存储 PhotoSwipe 所需的图片数据
+        const photoSwipeItems = [];
+        // 数组用于存储所有被装饰后的链接元素，用于事件委托
+        const decoratedLinks = [];
+
+        // 2. 遍历找到的 figure 元素
+        targetFigures.forEach(function(figure, index) {
+            const img = figure.querySelector('img');
+            if (!img) return; // 如果没有 img 元素，则跳过
+
+            const imgSrc = img.src;
+            const figcaption = figure.querySelector('figcaption');
+            const captionText = figcaption ? figcaption.textContent : '';
+
+            // 2.1 为每个 figure 动态创建一个包裹图片的链接 (a 标签)
+            //     PhotoSwipe 通常通过点击 a 标签来触发
+            const link = document.createElement('a');
+            // 设置链接的 href 为大图地址（这里用原图，如果需要可以另行指定大图URL）
+            link.href = imgSrc;
+            // 添加 data-pswp-* 属性，这是 PhotoSwipe 识别图片尺寸的关键
+            link.setAttribute('data-pswp-width', img.naturalWidth); // 使用图片自然宽度
+            link.setAttribute('data-pswp-height', img.naturalHeight); // 使用图片自然高度
+            // 可选：存储索引，用于事件处理
+            link.setAttribute('data-index', index);
+            // 设置光标样式，提示用户可点击，去掉链接默认样式
+            link.style.cursor = 'pointer';
+            link.style.color = 'inherit';
+            link.style.textDecorationLine = 'none';
+            // 2.2 将原 figure 中的 img 和 figcaption 放入新创建的链接中
+            //     清空 figure 原有内容
+            while (figure.firstChild) {
+                figure.firstChild.remove();
+            }
+            // 将链接追加到 figure 中
+            figure.appendChild(link);
+            // 将图片和标题重新放回（现在在链接内）
+            link.appendChild(img);
+            if (figcaption) {
+                link.appendChild(figcaption);
+            }
+
+            // 2.3 为 PhotoSwipe 准备数据源
+            photoSwipeItems.push({
+                src: imgSrc,
+                w: img.naturalWidth,
+                h: img.naturalHeight,
+                title: captionText // 可选标题
+            });
+
+            // 记录被装饰的链接
+            decoratedLinks.push(link);
+        });
+
+
+
+        // 4. （可选）如果需要更复杂的自定义，例如修改数据源，可以监听事件
+        lightbox.on('beforeOpen', () => {
+            console.log('Lightbox 即将打开');
+        });
+
+        lightbox.on('change', () => {
+            console.log('切换了图片');
+        });
+
+        // 5. 初始化 Lightbox
+        lightbox.init();
+    });
+</script>
 <!-- PhotoSwipe -->
 <script type="module">
+// 3. 初始化 PhotoSwipe Lightbox
+//    注意：这里使用事件委托，因为链接是动态“装饰”的
 const lightbox = new PhotoSwipeLightbox({
-gallery: '#gallery',
-children: 'a',
-pswpModule: PhotoSwipe,
+    // 指定事件委托的父容器（也可以是 document）
+    gallery: 'body', // 事件委托给 body，监听其子元素的点击事件
+    // 指定哪些子元素触发 lightbox（选择我们装饰过的链接）
+    children: 'a[data-pswp-width]', // 通过属性选择器选择
+    pswpModule: PhotoSwipe,
+    // 附加选项
+    arrowKeys: true,
+    zoom: true,
+    wheelToZoom: true,
+    padding: { top: 20, bottom: 40, left: 0, right: 0 }
 });
 lightbox.init();
 </script>
