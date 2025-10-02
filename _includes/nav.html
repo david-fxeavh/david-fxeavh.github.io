@@ -1,97 +1,358 @@
-<!-- Navigation -->
-{% if page.nav-style == "invert" or page.header-style == "text" %}
-<nav class="navbar navbar-default navbar-custom navbar-fixed-top invert">
-    {% else %}
-    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-        {% endif %}
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header page-scroll">
-                <button type="button" class="navbar-toggle">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="{{ site.baseurl }}/">{{ site.title }}</a>
-            </div>
-
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div id="huxblog_navbar">
-                <div class="navbar-collapse">
-                    <ul class="nav navbar-nav navbar-right">
-                        <li>
-                            <a href="{{ site.baseurl }}/">Home</a>
-                        </li>
-                        {% for page in site.pages %}
-                        {% if page.title and page.hide-in-nav != true %}
-                        <li>
-                            <a href="{{ page.url | prepend: site.baseurl }}">{{ page.title }}</a>
-                        </li>
-                        {% endif %}
-                        {% endfor %}
-                        <li class="search-icon">
-                            <a href="javascript:void(0)">
-                                <i class="fa fa-search"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            <!-- /.navbar-collapse -->
-        </div>
-        <!-- /.container -->
-    </nav>
-
-    <script>
-        // Drop Bootstarp low-performance Navbar
-        // Use customize navbar with high-quality material design animation
-        // in high-perf jank-free CSS3 implementation
-        var $body = document.body;
-        var $toggle = document.querySelector('.navbar-toggle');
-        var $navbar = document.querySelector('#huxblog_navbar');
-        var $collapse = document.querySelector('.navbar-collapse');
-
-        var __HuxNav__ = {
-            close: function () {
-                $navbar.className = " ";
-                // wait until animation end.
-                setTimeout(function () {
-                    // prevent frequently toggle
-                    if ($navbar.className.indexOf('in') < 0) {
-                        $collapse.style.height = "0px"
-                    }
-                }, 400)
-            },
-            open: function () {
-                $collapse.style.height = "auto"
-                $navbar.className += " in";
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JavaScript设备检测示例</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(90deg, #4b6cb7 0%, #182848 100%);
+            color: white;
+            padding: 30px 20px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .detection-info {
+            background: #f9f9f9;
+            padding: 25px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .detection-info h2 {
+            color: #4b6cb7;
+            margin-bottom: 15px;
+        }
+        
+        .device-status {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .status-indicator {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            margin-right: 15px;
+        }
+        
+        .mobile {
+            background: #48bb78;
+        }
+        
+        .desktop {
+            background: #4299e1;
+        }
+        
+        .device-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .device-content {
+                grid-template-columns: 1fr;
             }
         }
-
-        // Bind Event
-        $toggle.addEventListener('click', function (e) {
-            if ($navbar.className.indexOf('in') > 0) {
-                __HuxNav__.close()
-            } else {
-                __HuxNav__.open()
+        
+        .desktop-content, .mobile-content {
+            padding: 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        .desktop-content {
+            background: #e6f7ff;
+            border-left: 5px solid #4299e1;
+        }
+        
+        .mobile-content {
+            background: #f0fff4;
+            border-left: 5px solid #48bb78;
+        }
+        
+        h2 {
+            margin-bottom: 15px;
+            color: #182848;
+        }
+        
+        .feature-list {
+            list-style-type: none;
+            margin-top: 15px;
+        }
+        
+        .feature-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            color: #48bb78;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+        
+        .code-block {
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+        }
+        
+        .info-box {
+            background: #fff9c4;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+            border-left: 5px solid #ffd600;
+        }
+        
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            margin-top: 30px;
+        }
+        
+        .mobile-only {
+            display: none;
+        }
+        
+        .desktop-only {
+            display: block;
+        }
+        
+        /* 移动设备样式 */
+        @media (max-width: 768px) {
+            .mobile-only {
+                display: block;
             }
-        })
+            
+            .desktop-only {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>JavaScript设备检测示例</h1>
+            <p class="subtitle">检测设备类型并在移动端显示特定内容</p>
+        </header>
+        
+        <div class="content">
+            <div class="detection-info">
+                <h2>设备检测状态</h2>
+                <div class="device-status">
+                    <div class="status-indicator" id="deviceIndicator"></div>
+                    <div>
+                        <h3 id="deviceType">检测中...</h3>
+                        <p id="deviceDetails">正在检测您的设备类型</p>
+                    </div>
+                </div>
+                
+                <div class="code-block">
+// JavaScript设备检测代码
+function detectDevice() {
+    // 方法1: 通过User Agent检测
+    const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    
+    // 方法2: 通过屏幕尺寸检测
+    const isMobileScreen = window.innerWidth <= 768;
+    
+    // 方法3: 通过触摸支持检测
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+    
+    // 综合判断
+    return isMobileUA && isMobileScreen && isTouchDevice;
+}
 
-        /**
-         * Since Fastclick is used to delegate 'touchstart' globally
-         * to hack 300ms delay in iOS by performing a fake 'click',
-         * Using 'e.stopPropagation' to stop 'touchstart' event from 
-         * $toggle/$collapse will break global delegation.
-         * 
-         * Instead, we use a 'e.target' filter to prevent handler
-         * added to document close HuxNav.  
-         *
-         * Also, we use 'click' instead of 'touchstart' as compromise
-         */
-        document.addEventListener('click', function (e) {
-            if (e.target == $toggle) return;
-            if (e.target.className == 'icon-bar') return;
-            __HuxNav__.close();
-        })
+// 根据检测结果显示内容
+if (detectDevice()) {
+    document.getElementById('mobileContent').style.display = 'block';
+    document.getElementById('desktopContent').style.display = 'none';
+} else {
+    document.getElementById('mobileContent').style.display = 'none';
+    document.getElementById('desktopContent').style.display = 'block';
+}
+                </div>
+            </div>
+            
+            <div class="device-content">
+                <div class="desktop-content" id="desktopContent">
+                    <h2>桌面端内容</h2>
+                    <p>您正在使用桌面设备访问此页面。桌面端体验包含以下特性：</p>
+                    <ul class="feature-list">
+                        <li>多栏布局和复杂网格系统</li>
+                        <li>鼠标悬停效果和精细交互</li>
+                        <li>大型图片和高分辨率资源</li>
+                        <li>完整的导航菜单和侧边栏</li>
+                        <li>高级功能和复杂用户界面</li>
+                    </ul>
+                    
+                    <div class="desktop-only">
+                        <h3 style="margin-top: 20px;">桌面端专属内容</h3>
+                        <p>这部分内容只在桌面设备上显示，包含一些需要较大屏幕空间的功能和组件。</p>
+                    </div>
+                </div>
+                
+                <div class="mobile-content" id="mobileContent">
+                    <h2>移动端内容</h2>
+                    <p>您正在使用移动设备访问此页面。我们已为您优化了移动端体验：</p>
+                    <ul class="feature-list">
+                        <li>简洁的单栏布局</li>
+                        <li>触摸友好的大按钮和控件</li>
+                        <li>优化加载速度的轻量资源</li>
+                        <li>简化的导航和汉堡菜单</li>
+                        <li>针对小屏幕优化的内容</li>
+                    </ul>
+                    
+                    <div class="mobile-only">
+                        <h3 style="margin-top: 20px;">移动端专属内容</h3>
+                        <p>这部分内容只在移动设备上显示，包含移动端专属功能和优化内容。</p>
+                        <div style="margin-top: 15px; padding: 15px; background: white; border-radius: 8px;">
+                            <h4>移动端专属功能</h4>
+                            <p>点击拨打: <a href="tel:1234567890" style="color: #4b6cb7;">123-456-7890</a></p>
+                            <p>发送短信: <a href="sms:1234567890" style="color: #4b6cb7;">发送短信</a></p>
+                            <p>地图导航: <a href="https://maps.google.com" style="color: #4b6cb7;">打开地图</a></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <h3>实现说明</h3>
+                <p>此页面使用JavaScript检测设备类型，并根据检测结果动态显示不同的HTML内容。</p>
+                <p>检测方法包括：</p>
+                <ul>
+                    <li><strong>User Agent检测:</strong> 检查浏览器用户代理字符串中的移动设备标识</li>
+                    <li><strong>屏幕尺寸检测:</strong> 检查视口宽度是否小于等于768px</li>
+                    <li><strong>触摸支持检测:</strong> 检查设备是否支持触摸操作</li>
+                </ul>
+                <p>在实际项目中，建议结合多种检测方法以提高准确性。</p>
+            </div>
+        </div>
+        
+        <footer>
+            <p>© 2023 JavaScript设备检测示例 | 演示移动端与桌面端内容切换</p>
+        </footer>
+    </div>
+
+    <script>
+        // 设备检测函数
+        function detectDevice() {
+            // 方法1: 通过User Agent检测
+            const isMobileUA = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            
+            // 方法2: 通过屏幕尺寸检测
+            const isMobileScreen = window.innerWidth <= 768;
+            
+            // 方法3: 通过触摸支持检测
+            const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+            
+            // 综合判断 - 如果满足所有条件，则认为是移动设备
+            return isMobileUA && isMobileScreen && isTouchDevice;
+        }
+        
+        // 更新设备信息显示
+        function updateDeviceInfo() {
+            const deviceIndicator = document.getElementById('deviceIndicator');
+            const deviceType = document.getElementById('deviceType');
+            const deviceDetails = document.getElementById('deviceDetails');
+            
+            const isMobile = detectDevice();
+            
+            if (isMobile) {
+                deviceIndicator.className = 'status-indicator mobile';
+                deviceType.textContent = '移动设备';
+                deviceDetails.textContent = `屏幕宽度: ${window.innerWidth}px | 触摸支持: 是 | User Agent: 移动设备`;
+            } else {
+                deviceIndicator.className = 'status-indicator desktop';
+                deviceType.textContent = '桌面设备';
+                deviceDetails.textContent = `屏幕宽度: ${window.innerWidth}px | 触摸支持: 否 | User Agent: 桌面设备`;
+            }
+        }
+        
+        // 根据设备类型显示内容
+        function toggleContent() {
+            const mobileContent = document.getElementById('mobileContent');
+            const desktopContent = document.getElementById('desktopContent');
+            
+            if (detectDevice()) {
+                // 移动设备
+                mobileContent.style.display = 'block';
+                desktopContent.style.display = 'none';
+            } else {
+                // 桌面设备
+                mobileContent.style.display = 'none';
+                desktopContent.style.display = 'block';
+            }
+        }
+        
+        // 初始加载时执行
+        document.addEventListener('DOMContentLoaded', function() {
+            updateDeviceInfo();
+            toggleContent();
+        });
+        
+        // 窗口大小变化时重新检测
+        window.addEventListener('resize', function() {
+            updateDeviceInfo();
+            toggleContent();
+        });
     </script>
+</body>
+</html>

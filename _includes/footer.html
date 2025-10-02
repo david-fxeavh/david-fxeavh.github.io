@@ -44,7 +44,7 @@
 <script src="{{ "/js/sw-registration.js " | prepend: site.baseurl }}"></script>
 {% endif %}
 
-<!-- 激活 -->
+<!-- 激活popover -->
 <script>
     $(function () {
         $('[data-toggle="popover"]').popover()
@@ -165,6 +165,7 @@
     })();
 </script>
 {% endif %}
+<!-- 自动添加photoswipe功能 -->
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // 1. 找到所有你想自动添加 PhotoSwipe 功能的 figure 元素
