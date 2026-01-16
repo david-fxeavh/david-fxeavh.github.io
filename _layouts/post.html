@@ -177,14 +177,6 @@ document.addEventListener('DOMContentLoaded', function() {
         updateCatalogIcon();
     }
     
-    // 更新目录图标
-    function updateCatalogIcon() {
-        if (isCatalogOpen) {
-            catalogToggle.innerHTML = '− CATALOG';
-        } else {
-            catalogToggle.innerHTML = '+ CATALOG';
-        }
-    }
     
     // 切换目录展开/折叠
     catalogToggle.addEventListener('click', function(e) {
@@ -281,10 +273,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 // 添加高亮动画
                 anime({
                     targets: link,
-                    backgroundColor: [
-                        {value: '#f5f5f5', duration: 0},
-                        {value: '#e8f4f8', duration: 300}
-                    ],
                     color: [
                         {value: '#0085a1', duration: 0},
                         {value: '#2a9d8f', duration: 300}
