@@ -20,6 +20,8 @@
     </div>
 </footer>
 
+<!-- anime.js -->
+<script src="cdn.jsdelivr.net/npm/animejs/dist/bundles/anime.umd.min.js"></script>
 <!-- jQuery -->
 <script src="{{ "/js/jquery.min.js " | prepend: site.baseurl }}"></script>
 
@@ -321,6 +323,225 @@ lightbox.init();
 </script>
 {% endunless %}
 
+{% unless page.no-catalog %}
+<script>
+// 侧边目录动画功能
+document.addEventListener('DOMContentLoaded', function() {
+    // 只在有目录容器的页面上执行
+    const catalogContainer = document.querySelector('.catalog-container');
+    if (!catalogContainer) return;
+    
+    const catalogToggle = document.getElementById('catalogToggle');
+    const sideCatalog = document.getElementById('sideCatalog');
+    const catalogBody = document.getElementById('catalogBody');
+    
+    // 如果没有目录元素，则退出
+    if (!catalogToggle || !sideCatalog || !catalogBody) return;
+    
+    let isCatalogOpen = !sideCatalog.classList.contains('fold');
+    
+    // 初始化目录动画
+    function initCatalogAnimation() {
+        // 获取所有目录项
+        const catalogItems = catalogBody.querySelectorAll('li');
+        if (catalogItems.length === 0) return;
+        
+        // 为每个目录项设置初始状态
+        catalogItems.forEach((item, index) => {
+            // 如果目录是展开状态，则设置动画初始状态
+            if (isCatalogOpen) {
+                item.style.opacity = '0';
+                item.style.transform = 'translateX(-15px)';
+                
+                // 使用 anime.js 创建入场动画
+                anime({
+                    targets: item,
+                    opacity: 1,
+                    translateX: 0,
+                    duration: 500,
+                    delay: index * 60,
+                    easing: 'easeOutQuad',
+                    begin: function() {
+                        // 动画开始时的回调
+                        item.style.visibility = 'visible';
+                    }
+                });
+            }
+        });
+        
+        // 更新目录图标
+        updateCatalogIcon();
+    }
+    
+    
+    // 切换目录展开/折叠
+    catalogToggle.addEventListener('click', function(e) {
+        e.preventDefault();
+        
+        const catalogItems = catalogBody.querySelectorAll('li');
+        if (catalogItems.length === 0) return;
+        
+        if (isCatalogOpen) {
+            // 折叠目录动画
+            anime({
+                targets: catalogBody,
+                height: 0,
+                opacity: 0,
+                duration: 400,
+                easing: 'easeInOutQuad',
+                begin: function() {
+                    sideCatalog.classList.add('fold');
+                },
+            });
+            
+            // 隐藏目录项动画
+            anime({
+                targets: catalogItems,
+                opacity: 0,
+                translateX: -15,
+                duration: 300,
+                easing: 'easeInQuad',
+                delay: anime.stagger(30, {start: 100})
+            });
+        } else {
+            // 展开目录动画
+            anime({
+                targets: catalogBody,
+                height: catalogBody.scrollHeight,
+                opacity: 1,
+                duration: 500,
+                easing: 'easeOutExpo',
+                begin: function() {
+                    sideCatalog.classList.remove('fold');
+                }
+            });
+            
+            // 显示目录项动画
+            anime({
+                targets: catalogItems,
+                opacity: 1,
+                translateX: 0,
+                duration: 400,
+                easing: 'easeOutQuad',
+                delay: anime.stagger(40, {start: 100})
+            });
+        }
+        
+        isCatalogOpen = !isCatalogOpen;
+    });
+    
+    // 滚动时高亮当前章节
+    function updateActiveCatalog() {
+        const headers = document.querySelectorAll('h1[id], h2[id], h3[id], h4[id], h5[id], h6[id]');
+        const catalogLinks = catalogBody.querySelectorAll('a');
+        
+        if (headers.length === 0 || catalogLinks.length === 0) return;
+        
+        let currentActive = null;
+        
+        // 查找当前视口中的标题
+        headers.forEach((header) => {
+            const rect = header.getBoundingClientRect();
+            if (rect.top <= 150 && rect.bottom >= 50) {
+                currentActive = header.id;
+            }
+        });
+        
+
+    }
+    
+    // 节流函数，优化滚动性能
+    function throttle(func, wait) {
+        let timeout = null;
+        let previous = 0;
+        
+        return function() {
+            const now = Date.now();
+            const remaining = wait - (now - previous);
+            const context = this;
+            const args = arguments;
+            
+            if (remaining <= 0 || remaining > wait) {
+                if (timeout) {
+                    clearTimeout(timeout);
+                    timeout = null;
+                }
+                previous = now;
+                func.apply(context, args);
+            } else if (!timeout) {
+                timeout = setTimeout(function() {
+                    previous = Date.now();
+                    timeout = null;
+                    func.apply(context, args);
+                }, remaining);
+            }
+        };
+    }
+    
+    // 监听滚动事件（使用节流）
+    window.addEventListener('scroll', throttle(updateActiveCatalog, 100));
+    
+    // 鼠标悬停目录项效果
+    catalogBody.addEventListener('mouseover', function(e) {
+        if (e.target.tagName === 'A') {
+            anime({
+                targets: e.target,
+                scale: 1.03,
+                translateX: 3,
+                duration: 200,
+                easing: 'easeOutQuad'
+            });
+        }
+    });
+    
+    catalogBody.addEventListener('mouseout', function(e) {
+        if (e.target.tagName === 'A') {
+            anime({
+                targets: e.target,
+                scale: 1,
+                translateX: 0,
+                duration: 200,
+                easing: 'easeOutQuad'
+            });
+        }
+    });
+    
+    // 目录项点击平滑滚动
+    catalogBody.addEventListener('click', function(e) {
+        if (e.target.tagName === 'A' && e.target.getAttribute('href')?.startsWith('#')) {
+            e.preventDefault();
+            const targetId = e.target.getAttribute('href').substring(1);
+            const targetElement = document.getElementById(targetId);
+            
+            if (targetElement) {
+                // 平滑滚动到目标元素
+                window.scrollTo({
+                    top: targetElement.offsetTop - 100,
+                    behavior: 'smooth'
+                });
+                
+                // 为点击的目录项添加点击反馈动画
+                anime({
+                    targets: e.target,
+                    scale: [1, 1.1, 1],
+                    duration: 300,
+                    easing: 'easeInOutQuad'
+                });
+            }
+        }
+    });
+    
+    // 初始化目录动画
+    // 等待页面完全加载后执行
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', initCatalogAnimation);
+    } else {
+        // DOMContentLoaded 已经完成
+        setTimeout(initCatalogAnimation, 300);
+    }
+});
+</script>
+{% endunless %}
 
 <!-- Multi-Lingual -->
 {% if page.multilingual %}
