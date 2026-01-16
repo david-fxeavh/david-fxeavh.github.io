@@ -251,33 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // 更新目录项高亮
-        catalogLinks.forEach(link => {
-            const linkHref = link.getAttribute('href');
-            if (!linkHref) return;
-            
-            // 移除 # 符号获取 ID
-            const linkId = linkHref.startsWith('#') ? linkHref.substring(1) : linkHref;
-            
-            if (link.classList.contains('active')) {
-                link.classList.remove('active');
-            }
-            
-            if (linkId === currentActive) {
-                link.classList.add('active');
-                
-                // 添加高亮动画
-                anime({
-                    targets: link,
-                    color: [
-                        {value: '#0085a1', duration: 0},
-                        {value: '#2a9d8f', duration: 300}
-                    ],
-                    easing: 'easeInOutQuad',
-                    duration: 400
-                });
-            }
-        });
+
     }
     
     // 节流函数，优化滚动性能
