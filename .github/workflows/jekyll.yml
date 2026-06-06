@@ -39,6 +39,7 @@ jobs:
       - name: Setup Ruby (no cache)
         uses: ruby/setup-ruby@v1
         with:
+<<<<<<< HEAD
           ruby-version: '3.1'
           bundler-cache: false   # 关闭缓存，确保全新解析
 
@@ -47,6 +48,11 @@ jobs:
           gem install bundler
           bundle install
 
+=======
+          ruby-version: '3.1' # Not needed with a .ruby-version file
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+          cache-version: 3 # Increment this number if you need to re-download cached gems
+>>>>>>> 6edf7f5d6ea61cd97ccabc33296abd70cd3d14f8
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
