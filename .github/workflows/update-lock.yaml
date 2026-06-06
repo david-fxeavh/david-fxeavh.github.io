@@ -1,10 +1,10 @@
-name: Update Gemfile.lock (fix sass-embedded)
+name: Update Gemfile.lock
 
 on:
-  workflow_dispatch:
+  workflow_dispatch:  # 允许你手动触发
 
 jobs:
-  update-lock:
+  update:
     runs-on: ubuntu-22.04
     steps:
       - uses: actions/checkout@v4
@@ -12,15 +12,17 @@ jobs:
       - uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-          bundler-cache: false
+          bundler-cache: false   # 不使用缓存，全新安装
 
-      - name: Update Gemfile.lock only (no install)
+      - name: Install bundler and update gem
         run: |
           gem install bundler
-          bundle lock --update sass-embedded
+          bundle config set --local path 'vendor/bundle'
+          bundle install
+          bundle update sass-embedded --conservative
 
       - name: Commit updated Gemfile.lock
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Downgrade sass-embedded to compatible version"
+          commit_message: "Update Gemfile.lock (sass-embedded downgrade)"
           file_pattern: 'Gemfile.lock'
