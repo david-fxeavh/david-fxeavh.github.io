@@ -32,33 +32,25 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
-      - name: DEBUG - Show Gemfile content
-        run: cat Gemfile
-
-      - name: Setup Ruby (no cache)
+      - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
           ruby-version: '3.1'
-          bundler-cache: false   # 关闭缓存，确保全新解析
-
+          bundler-cache: true
+          cache-version: 2
       - name: Install dependencies
         run: |
           gem install bundler
           bundle install
-
       - name: Setup Pages
         id: pages
         uses: actions/configure-pages@v5
-
       - name: Build with Jekyll
         run: bundle exec jekyll build --baseurl "${{ steps.pages.outputs.base_path }}"
         env:
           JEKYLL_ENV: production
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
-
   # Deployment job
   deploy:
     environment:

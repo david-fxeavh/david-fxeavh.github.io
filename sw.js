@@ -117,14 +117,15 @@ self.addEventListener('install', e => {
  *  waitUntil(): activating ====> activated
  */
 self.addEventListener('activate', event => {
-  // delete old deprecated caches.
-  caches.keys().then(cacheNames => Promise.all(
-    cacheNames
-      .filter(cacheName => DEPRECATED_CACHES.includes(cacheName))
-      .map(cacheName => caches.delete(cacheName))
-  ))
-  console.log('service worker activated.')
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    caches.keys().then(cacheNames => Promise.all(
+      cacheNames
+        .filter(cacheName => DEPRECATED_CACHES.includes(cacheName))
+        .map(cacheName => caches.delete(cacheName))
+    ))
+  );
+  event.waitUntil(self.clients.claim());  // 确保新 SW 立即控制页面
+  console.log('service worker activated.');
 });
 
 
@@ -251,18 +252,17 @@ function sendMessageToClientsAsync(msg) {
  * @return {Promise}
  */
 function revalidateContent(cachedResp, fetchedResp) {
-  // revalidate when both promise resolved
   return Promise.all([cachedResp, fetchedResp])
     .then(([cached, fetched]) => {
-      const cachedVer = cached.headers.get('last-modified')
-      const fetchedVer = fetched.headers.get('last-modified')
+      const cachedVer = cached.headers.get('last-modified');
+      const fetchedVer = fetched.headers.get('last-modified');
       console.log(`"${cachedVer}" vs. "${fetchedVer}"`);
       if (cachedVer !== fetchedVer) {
-        sendMessageToClientsAsync({
-          'command': 'UPDATE_FOUND',
-          'url': fetched.url
-        })
+        // 直接刷新所有打开的客户端，让用户立刻看到新内容
+        self.clients.matchAll().then(clients => {
+          clients.forEach(client => client.navigate(client.url));
+        });
       }
     })
-    .catch(err => console.log(err))
+    .catch(err => console.log(err));
 }
