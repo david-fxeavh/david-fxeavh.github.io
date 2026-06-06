@@ -30,10 +30,7 @@
   {% assign muted_attr = 'muted' %}
 {% endif %}
 
-<script type="module">
-  import { defineElements } from 'https://fastly.jsdelivr.net/npm/@videojs/html/cdn/video.js';
-  defineElements();  // 注册自定义标签，只需调用一次
-</script>
+<script type="module" src="https://cdn.jsdelivr.net/npm/@videojs/html/cdn/video.js"></script>
 <link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@videojs/html/cdn/video.css" />
 
 <style>
