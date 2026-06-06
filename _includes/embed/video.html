@@ -15,71 +15,87 @@
       {% include media-url.html src=poster_url subpath=page.media_subpath %}
     {%- endcapture -%}
   {% endunless %}
-  {% assign poster = 'poster="' | append: poster_url | append: '"' %}
 {% endif %}
 
-{% assign attributes = 'controls' %}
-
+{% assign autoplay_attr = '' %}
 {% if include.autoplay %}
-  {% assign attributes = attributes | append: ' ' | append: 'autoplay' %}
+  {% assign autoplay_attr = 'autoplay' %}
 {% endif %}
-
+{% assign loop_attr = '' %}
 {% if include.loop %}
-  {% assign attributes = attributes | append: ' ' | append: 'loop' %}
+  {% assign loop_attr = 'loop' %}
+{% endif %}
+{% assign muted_attr = '' %}
+{% if include.muted %}
+  {% assign muted_attr = 'muted' %}
 {% endif %}
 
-{% if include.muted %}
-  {% assign attributes = attributes | append: ' ' | append: 'muted' %}
-{% endif %}
+<script type="module">
+  import { defineElements } from 'https://fastly.jsdelivr.net/npm/@videojs/html/cdn/video.js';
+  defineElements();  // 注册自定义标签，只需调用一次
+</script>
+<link rel="stylesheet" href="https://fastly.jsdelivr.net/npm/@videojs/html/cdn/video.css" />
+
 <style>
   .embed-video {
     width: 100%;
-    height: 100%;
     margin-bottom: 1rem;
     aspect-ratio: 16 / 9;
     border-radius: 10px;
-  
-    &.file {
-      display: block;
-      width: auto;
-      height: auto;
-      max-width: 100%;
-      max-height: 100%;
-      margin: auto;
-      margin-bottom: 0;
-    }
-  
+  }
+  .embed-video video-player,
+  .embed-video video-skin {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+    display: block;
+  }
+  .embed-video em {
     display: block;
     text-align: center;
     font-style: normal;
     font-size: 80%;
-    padding: 0;
+    margin-top: 0.5rem;
     color: #6d6c6c;
   }
 </style>
 
-<p>
-  <video class="embed-video file" {{ poster }} {{ attributes }}>
-    {% assign extension = video_url | split: '.' | last %}
-    {% assign types = extension | concat: types %}
+<div class="embed-video">
+  <video-player>
+    <video-skin>
+      <video
+        src="{{ video_url | strip }}"
+        poster="{{ poster_url }}"
+        controls
+        preload="auto"
+        {{ autoplay_attr }}
+        {{ loop_attr }}
+        {{ muted_attr }}
+      >
+        {% assign extension = video_url | split: '.' | last %}
+        {% assign types = extension | concat: types %}
 
-    {% assign ext_size = extension | size %}
-    {% assign src_size = video_url | size %}
-    {% assign slice_size = src_size | minus: ext_size %}
+        {% assign ext_size = extension | size %}
+        {% assign src_size = video_url | size %}
+        {% assign slice_size = src_size | minus: ext_size %}
 
-    {% assign filepath = video_url | slice: 0, slice_size %}
+        {% assign filepath = video_url | slice: 0, slice_size %}
 
-    {% for type in types %}
-      {% assign src = filepath | append: type %}
-      {% assign media_item = site.data.media | find: 'extension', type %}
-      {% assign mime_type = media_item.mime_type | default: type %}
-      <source src="{{ src }}" type="video/{{ mime_type }}">
-    {% endfor %}
+        {% for type in types %}
+          {% assign src = filepath | append: type %}
+          {% assign media_item = site.data.media | find: 'extension', type %}
+          {% assign mime_type = media_item.mime_type | default: type %}
+          <source src="{{ src }}" type="video/{{ mime_type }}">
+        {% endfor %}
 
-    Your browser does not support the video tag. Here is a
-    <a href="{{ video_url | strip }}">link to the video file</a> instead.
-  </video>
+        <p class="vjs-no-js">
+          Your browser does not support the video tag. Here is a
+          <a href="{{ video_url | strip }}">link to the video file</a> instead.
+        </p>
+      </video>
+    </video-skin>
+  </video-player>
   {% if title %}
     <em>{{ title }}</em>
   {% endif %}
-</p>
+</div>
